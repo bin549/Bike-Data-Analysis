@@ -8,7 +8,7 @@ def main():
     # get column
     # draw simple
     # sentence
-    # draw it
+    # draw it 111
     pass
 
 
