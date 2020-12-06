@@ -1,173 +1,95 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import jieba
 
 
 def main():
     # read file
-    df = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
-    print(type(df))
-    # get column
+    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
 
-    df['学校名称'].value_counts()
+    # print(len(excel_data))
 
-    ser = pd.Series(np.logspace(-2, 2, 30))
-    n_25 = np.percentile(ser, q=[25, 95])[0]
-    n_95 = np.percentile(ser, q=[25, 95])[1]
-    df = pd.DataFrame(ser)
-    df[df[0] < n_25] = n_25
-    df[df[0] > n_95] = n_95
-    print(df.transpose)
+    # df = pd.DataFrame(excel_data["性别"].value_counts())
+    # df = pd.DataFrame(excel_data["年级"].value_counts())
+    # df = pd.DataFrame(excel_data["宿舍"].value_counts())
+    # df = pd.DataFrame(excel_data["月消费"].value_counts())
+    # df = pd.DataFrame(excel_data["月消费"].value_counts())
 
-    df = pd.DataFrame(np.random.randn(100, 3), columns=["col1", "col2", "col3"])
-    df.plot.bar(stacked=True)
+    # 出行方式
+    # df = pd.DataFrame(excel_data["步行"].value_counts())
+    # df = pd.DataFrame(excel_data["自行车"].value_counts())
+    # df = pd.DataFrame(excel_data["电瓶车"].value_counts())
+    # df = pd.DataFrame(excel_data["私家车"].value_counts())
+    # df = pd.DataFrame(excel_data["平衡车"].value_counts())
+    # df = pd.DataFrame(excel_data["其他"].value_counts())
 
-    df1 = pd.DataFrame({'fruit': ['apple', 'banana', 'orange'] * 3,
-                        'weight': ['high', 'medium', 'low'] * 3,
-                        'price': np.random.randint(0, 10, 9)})
+    # 选择步行的原因
+    # df = pd.DataFrame(excel_data["距离近"].value_counts())
+    # df = pd.DataFrame(excel_data["锻炼身体"].value_counts())
+    # df = pd.DataFrame(excel_data["时间充裕"].value_counts())
+    # df = pd.DataFrame(excel_data["与人同行"].value_counts())
 
-    df2 = pd.DataFrame({'pazham': ['apple', 'orange', 'pine'] * 2,
-                        'kilo': ['high', 'low'] * 3,
-                        'price': np.random.randint(0, 10, 6)})
+    # df = pd.DataFrame(excel_data["不坐电瓶车的原因"].value_counts())
+    # df = pd.DataFrame(excel_data["电瓶车价格是否合理"].value_counts())
+    # df = pd.DataFrame(excel_data["是否购买自行车"].value_counts())
+    # df = pd.DataFrame(excel_data["购买自行车的原因"].value_counts())
+    # df = pd.DataFrame(excel_data["购买自行车的价格"].value_counts())
 
-    n_df = pd.merge(df1, df2, how='inner',
-                    left_on=['fruit', 'weight'],
-                    right_on=['pazham', 'kilo'],
-                    suffixes=['_left', '_right'])
+    df = pd.DataFrame(excel_data["日常选择哪种品牌的共享单车"])
+    # df.drop()
+    blanks = []
 
-    print(n_df)
+    for i, rv in df.itertuples():
+        if type(rv) == str:
+            if rv == "(空)":
+                print(i, rv)
+                blanks.append(i)  # add matching index numbers to the list
 
-    p = pd.Series([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-    q = pd.Series([10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+    df.drop(blanks, inplace=True)
 
-    sum((p - q) ** 2) ** .5
+    print(df)
 
-    state = np.random.RandomState(100)
-    ser = pd.Series(state.normal(10, 5, 25))
-    np.percentile(ser, q=[0, 25, 50, 75, 100])
+    # df = pd.DataFrame(excel_data["坐电瓶车的原因"].value_counts())
+    # df = pd.DataFrame(excel_data["相较于疫情之前，您的出行方式是否有变化"].value_counts())
 
-    ser1 = pd.Series(list('abcedfghijklmnopqrstuvwxyz'))
-    ser2 = pd.Series(np.arange(26))
+    # 如果有变化，原因是
+    # df = pd.DataFrame(excel_data["缩减开支"].value_counts())
+    # df = pd.DataFrame(excel_data["锻炼身体"].value_counts())
+    # df = pd.DataFrame(excel_data["上课地点调动"].value_counts())
+    # df = pd.DataFrame(excel_data["宿舍调动"].value_counts())
+    # df = pd.DataFrame(excel_data["其他"].value_counts())
 
-    pd.DataFrame(pd.Series(ser1, ser2))
+    # 在校出行遇到的问题
+    # df = pd.DataFrame(excel_data["价格贵，开销大"].value_counts())
+    # df = pd.DataFrame(excel_data["道路拥堵"].value_counts())
+    # df = pd.DataFrame(excel_data["排队时间长"].value_counts())
+    # df = pd.DataFrame(excel_data["手续办理麻烦"].value_counts())
+    # df = pd.DataFrame(excel_data["通勤时间长"].value_counts())
+    # df = pd.DataFrame(excel_data["保安有冲突"].value_counts())
+    # df = pd.DataFrame(excel_data["防盗"].value_counts())
+    # df = pd.DataFrame(excel_data["其他"].value_counts())
 
-    mylist = list('abcedfghijklmnopqrstuvwxyz')
-    myarr = np.arange(26)
-
-    mydict = dict(zip(mylist, myarr))
-    ser = pd.Series(mydict)
-    print(ser)
-
-    dictionary = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 5}
-    pd.Series(dictionary)
-
-    numpy_array = np.arange(1, 10)
-    pd.Series(numpy_array)
-
-    a_list = list("abcdefg")
-    pd.Series(a_list)
-
-    df = {'Apple': pd.Series(['35', '41'], index=['2017 Sale', '2018 Sale']),
-          'Banana': pd.Series(['21', '34'], index=['2017 Sale', '2018 Sale'])}
-
-    pd.DataFrame(df)
-
-    countries = ['USA', 'France', 'China']
-    my_data = [100, 200, 300]
-
-    pd.Series(my_data, countries)
-
-    array = np.array(my_data)
-
-    pd.Series(array)
-
-    my_dict = {'a': 50, 'b': 60, 'c': 70, 'd': 80}
-
-    pd.Series(my_dict)
-
-    my_dict_list = [{'a': 50, 'b': 60, 'c': 70, 'd': 80}, {'a': 80, 'b': 80, 'c': 70, 'd': 80}]
-    df = pd.DataFrame(my_dict_list)
-
-    df
-
-    countries = ['USA', 'France', 'China']
-    my_data = [100, 200, 300]
-    series = pd.Series(my_data, countries)
-    series['USA']
-
-    series1 = pd.Series([1, 2, 3, 4], ['London', 'HongKong', 'Shanghai', 'Shenzhen'])
-    series2 = pd.Series([0, 6, 7, 8], ['London', 'Shenzhen', 'NewYork', 'Delhi'])
-
-    np.random.seed(100)
-    dataframe = pd.DataFrame(data=np.random.randint(low=1, high=10, size=(5, 4)))
-    print(dataframe)
-
-    df = {'name': pd.Series(['Jon', 'Aaron', 'Tod'], index=['a', 'b', 'c']),
-          'age': pd.Series(['39', '28', '17', '25'], index=['a', 'b', 'c', 'd']),
-          'nationality': pd.Series(['US', 'China', 'US'], ['a', 'b', 'c'])}
-    pd.DataFrame(df)
-
-    data = {'name': ['Jon', 'Aaron', 'Tod'],
-            'age': ['39', '28', '17'],
-            'nationality': ['US', 'China', 'US']}
-    my_df = pd.DataFrame(data,
-                         index=['Lagos', 'Dubai', 'Mumbai'])
-    my_df
-
-    my_data = [{'name': 'a', 'age': 3}, {'name': 'b', 'age': 18}]
-
-    temp_df = pd.DataFrame(my_data)
-
-    temp_df
-
-    my_df['name']
-
-    type(my_df['name'])
-
-    my_df[['name', 'age']]
-
-    type(my_df[['name', 'age']])
-
-    my_df
-
-    my_df['year'] = pd.Series(['2016', '2017', '2018'],
-                              ['Lagos', 'Dubai', 'Mumbai'])
-    my_df
-
-    my_df['age_year'] = my_df['age'] + my_df['year']
-    my_df
-
-    my_df.drop('age_year', axis=1)
-
-    my_df.drop('Dubai', axis=0)
-
-    my_df.drop(index='Lagos')
-
-    my_df
-
-    my_df.drop('Dubai', axis=0, inplace=True)
-    my_df
-
-    my_df.loc['Lagos']
-
-    my_df.loc[['Lagos', 'Mumbai']]
-
-    my_df.iloc[0]
-
-    my_df.iloc[[0, 1]]
-
-    my_df.loc['Lagos', 'name']
-
-    
+    # df = pd.DataFrame(excel_data["意见与建议"].value_counts())
 
 
-    # draw simple
+    # print(excel_data["是否购买自行车"].value_counts().iloc[0])
+    # print(excel_data["是否购买自行车"].value_counts().iloc[1])
 
-    # sentence
 
-    # draw it 111
+    # df.plot.pie(subplots=True, colors=['r', 'g', 'b', 'c'], autopct='%.2f', fontsize=20, figsize=(6, 6))
+    # plt.show()
 
-    pass
+
+    # df = excel_data["宿舍位置"].value_counts()
+    # df = excel_data["年级"].value_counts()
+    # df = excel_data["年级"].value_counts()
+    # df = excel_data["年级"].value_counts()
+    # df = excel_data["年级"].value_counts()
+    # df = excel_data["年级"].value_counts()
+    #plt.hist(df)
+    #df.plot.bar(stacked=True)
+
 
 
 if __name__ == '__main__':
