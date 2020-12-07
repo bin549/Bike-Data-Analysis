@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import jieba
-import spacy
+# import spacy
 
 def get_ents(doc):
     entities = []
@@ -13,42 +13,49 @@ def get_ents(doc):
 
 
 def main():
-    nlp = spacy.load('zh_core_web_sm')
+    # nlp = spacy.load('zh_core_web_sm')
     # print(len(excel_data))
-    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
     # print(nlp.Defaults.stop_words)
     # print(len(nlp.Defaults.stop_words))
 
 """
-    # df = pd.DataFrame(excel_data["不坐电瓶车的原因"].value_counts())
-    # df = pd.DataFrame(excel_data["购买自行车的原因"].value_counts())
-    # df = pd.DataFrame(excel_data["坐电瓶车的原因"].value_counts())
+    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
+    age = pd.DataFrame(excel_data["年级"].value_counts())
+    sex = pd.DataFrame(excel_data["性别"])
+    use_bike = pd.DataFrame([pd.DataFrame(excel_data["是否购买自行车"].value_counts()).loc[1][0],
+                       pd.DataFrame(excel_data["是否购买自行车"].value_counts()).loc[2][0]],
+                       index=['y', 'n'])
+    # use_bike.plot.pie(subplots=True, colors=['r', 'g', 'b', 'c'], autopct='%.2f', fontsize=20, figsize=(6, 6))
+    df2 = pd.DataFrame(age, columns=[sex.loc[1][0], sex.loc[2][0]])
+    print(df2.head())
+    df2.plot.bar()
+    plt.show()
+"""
+"""
+    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
+    sex = pd.DataFrame(excel_data["性别"])
+    print(pd.DataFrame(excel_data["步行"].value_counts()).loc[1][0])
+    goway = pd.DataFrame([pd.DataFrame(excel_data["步行"].value_counts()).loc[1][0],
+                    pd.DataFrame(excel_data["自行车"].value_counts()).loc[1][0],
+                    pd.DataFrame(excel_data["电瓶车"].value_counts()).loc[1][0],
+                    pd.DataFrame(excel_data["私家车"].value_counts()).loc[1][0],
+                    pd.DataFrame(excel_data["平衡车"].value_counts()).loc[0][0],
+                    pd.DataFrame(excel_data["其他"].value_counts()).loc[1][0]],
+                                 index = ['步行', '自行车', '电瓶车', '私家车', '平衡车', '其他'])
 
-    df = pd.DataFrame(excel_data["不坐电瓶车的原因"])
-    blanks = []
-    for i, rv in df.itertuples():
-        if type(rv) == str:
-            if rv == "(空)":
-                blanks.append(i)  # add matching index numbers to the list
-    df.drop(blanks, inplace=True)
-
-    words = {}
-    for i, rv in df.itertuples():
-        doc = nlp(rv)
-        entities = get_ents(doc)
-        if len(entities) != 0:
-            for entity in entities:
-                if entity in words:
-                    words[entity] += 1
-                else:
-                    words[entity] = 1
-    print(words)
-
-    df = pd.DataFrame(pd.Series(words))
-    df.plot(kind="bar")
+    df2 = pd.DataFrame(goway, columns=[sex.loc[1][0], sex.loc[2][0]])
+    print(df2.head())
+    df2.plot.bar()
     plt.show()
 """
 
+
+"""
+    df.plot.pie(subplots=True, figsize=(8, 4))
+    plt.show()
+    df.plot(x="步行", y=["性别"], kind="bar")
+    plt.show()
+"""
 """
     df = pd.DataFrame(excel_data["购买自行车的价格"])
     blanks = []
@@ -99,13 +106,6 @@ def main():
     df.plot.pie(subplots=True, colors=['r', 'g', 'b', 'c'], autopct='%.2f', fontsize=20, figsize=(6, 6))
     plt.show()
 """
-"""
-    df = pd.DataFrame([pd.DataFrame(excel_data["是否购买自行车"].value_counts()).loc[1],
-                       pd.DataFrame(excel_data["是否购买自行车"].value_counts()).loc[2]],
-                       index=['y', 'n'])
-    df.plot.pie(subplots=True, colors=['r', 'g', 'b', 'c'], autopct='%.2f', fontsize=20, figsize=(6, 6))
-    plt.show()
-"""
 
 """
     df = pd.DataFrame([pd.DataFrame(excel_data["距离近"].value_counts()).loc[1][0],
@@ -122,29 +122,7 @@ def main():
     df.plot.pie(subplots=True, figsize=(8, 4))
     plt.show()
 """
-"""
-    df = pd.DataFrame(excel_data["性别"].value_counts())
-    df.plot.pie(subplots=True, figsize=(8, 4))
-    plt.show()
-"""
 
-"""
-    df = pd.DataFrame(excel_data["年级"].value_counts())
-    df.plot.pie(subplots=True, figsize=(8, 4))
-    plt.show()
-"""
-
-"""
-    # df = pd.DataFrame([pd.DataFrame(excel_data["步行"].value_counts()).loc[1][0],
-    #                 pd.DataFrame(excel_data["自行车"].value_counts()).loc[1][0],
-    #                 pd.DataFrame(excel_data["电瓶车"].value_counts()).loc[1][0],
-    #                 pd.DataFrame(excel_data["私家车"].value_counts()).loc[1][0],
-    #                 pd.DataFrame(excel_data["平衡车"].value_counts()).loc[0][0],
-    #                 pd.DataFrame(excel_data["其他"].value_counts()).loc[1][0]],
-    #                              index = ['步行', '自行车', '电瓶车', '私家车', '平衡车', '其他'])
-    # df.plot.pie(subplots=True, figsize=(8, 4))
-    # plt.show()
-"""
 
 """
     df = pd.DataFrame(excel_data["宿舍位置"])
@@ -224,6 +202,36 @@ def main():
     print(df)
 """
 
+
+"""
+    # df = pd.DataFrame(excel_data["不坐电瓶车的原因"].value_counts())
+    # df = pd.DataFrame(excel_data["购买自行车的原因"].value_counts())
+    # df = pd.DataFrame(excel_data["坐电瓶车的原因"].value_counts())
+
+    df = pd.DataFrame(excel_data["不坐电瓶车的原因"])
+    blanks = []
+    for i, rv in df.itertuples():
+        if type(rv) == str:
+            if rv == "(空)":
+                blanks.append(i)  # add matching index numbers to the list
+    df.drop(blanks, inplace=True)
+
+    words = {}
+    for i, rv in df.itertuples():
+        doc = nlp(rv)
+        entities = get_ents(doc)
+        if len(entities) != 0:
+            for entity in entities:
+                if entity in words:
+                    words[entity] += 1
+                else:
+                    words[entity] = 1
+    print(words)
+
+    df = pd.DataFrame(pd.Series(words))
+    df.plot(kind="bar")
+    plt.show()
+"""
 
 if __name__ == '__main__':
     main()
