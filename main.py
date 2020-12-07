@@ -1,9 +1,8 @@
-import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import jieba
 import spacy
 
+excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
 
 def excel_info():
     print(len(excel_data))
@@ -21,8 +20,6 @@ def get_ents(doc):
         for ent in doc.ents:
             entities.append(ent.text)
     return entities
-
-excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
 
 
 def bike_way():
@@ -125,10 +122,10 @@ def electric_suitable():
 
 def nonbike_reason():
     df = pd.DataFrame([pd.DataFrame(excel_data["距离近"].value_counts()).loc[1][0],
-                    pd.DataFrame(excel_data["锻炼身体"].value_counts()).loc[1][0],
+                    pd.DataFrame(excel_data["可锻炼身体"].value_counts()).loc[1][0],
                     pd.DataFrame(excel_data["时间充裕"].value_counts()).loc[1][0],
                     pd.DataFrame(excel_data["与人同行"].value_counts()).loc[1][0]],
-                                 index=['距离近', '锻炼身体', '时间充裕', '与人同行'])
+                                 index=['距离近', '可锻炼身体', '时间充裕', '与人同行'])
     df.plot.pie(subplots=True, figsize=(8, 4))
     plt.show()
 
@@ -204,8 +201,8 @@ def change_reason():
                        pd.DataFrame(excel_data["锻炼身体"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["上课地点调动"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["宿舍调动"].value_counts()).loc[1][0],
-                       pd.DataFrame(excel_data["其他"].value_counts()).loc[1][0]],
-                      index=['缩减开支', '锻炼身体', '上课地点调动', '宿舍调动', '其他'])
+                       pd.DataFrame(excel_data["其它"].value_counts()).loc[1][0]],
+                      index=['缩减开支', '锻炼身体', '上课地点调动', '宿舍调动', '其他_'])
     df.plot.pie(subplots=True, figsize=(8, 4))
     plt.show()
 
@@ -219,9 +216,58 @@ def out_trouble():
                        pd.DataFrame(excel_data["保安有冲突"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["防盗"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["其他"].value_counts()).loc[1][0]],
-                      index=['价格贵', '道路拥堵', '排队时间长', '手续办理麻烦', '通勤时间长', '保安有冲突', '防盗', '其他'])
+                      index=['价格贵', '道路拥堵', '排队时间长', '手续办理麻烦', '通勤时间长', '保安有冲突', '防盗', '其他__'])
     df.plot.pie(subplots=True, figsize=(8, 4))
     plt.show()
+
+
+def fill_empty():
+    df = excel_data
+    excel_filepath = './excel/bike_data2.xlsx'
+    write = pd.ExcelWriter(excel_filepath)
+    df["步行"] = excel_data["步行"].fillna(0)
+    df["自行车"] = excel_data["自行车"].fillna(0)
+    df["电瓶车"] = excel_data["电瓶车"].fillna(0)
+    df["私家车"] = excel_data["私家车"].fillna(0)
+    df["平衡车"] = excel_data["平衡车"].fillna(0)
+    df["其他"] = excel_data["其他"].fillna(0)
+
+    df["距离近"] = excel_data["距离近"].fillna(0)
+    df["可锻炼身体"] = excel_data["可锻炼身体"].fillna(0)
+    df["时间充裕"] = excel_data["时间充裕"].fillna(0)
+    df["与人同行"] = excel_data["与人同行"].fillna(0)
+
+    df["不坐电瓶车的原因"] = excel_data["不坐电瓶车的原因"].fillna("(空)")
+    df["电瓶车价格是否合理"] = excel_data["电瓶车价格是否合理"].fillna("(空)")
+
+    df["购买自行车的原因"] = excel_data["购买自行车的原因"].fillna("(空)")
+    df["购买自行车的价格"] = excel_data["购买自行车的价格"].fillna("(空)")
+    df["日常选择哪种品牌的共享单车"] = excel_data["日常选择哪种品牌的共享单车"].fillna("(空)")
+    df["坐电瓶车的原因"] = excel_data["坐电瓶车的原因"].fillna("(空)")
+    df["相较于疫情之前，您的出行方式是否有变化"] = excel_data["相较于疫情之前，您的出行方式是否有变化"].fillna("(空)")
+
+    df["缩减开支"] = excel_data["缩减开支"].fillna(0)
+    df["锻炼身体"] = excel_data["锻炼身体"].fillna(0)
+    df["上课地点调动"] = excel_data["上课地点调动"].fillna(0)
+    df["宿舍调动"] = excel_data["宿舍调动"].fillna(0)
+    df["其他_"] = excel_data["其他_"].fillna(0)
+
+    df["价格贵"] = excel_data["价格贵"].fillna(0)
+    df["道路拥堵"] = excel_data["道路拥堵"].fillna(0)
+    df["排队时间长"] = excel_data["排队时间长"].fillna(0)
+    df["手续办理麻烦"] = excel_data["手续办理麻烦"].fillna(0)
+    df["通勤时间长"] = excel_data["通勤时间长"].fillna(0)
+    df["保安有冲突"] = excel_data["保安有冲突"].fillna(0)
+    df["防盗"] = excel_data["防盗"].fillna(0)
+    df["其他__"] = excel_data["其他__"].fillna(0)
+
+    df["意见与建议"] = excel_data["意见与建议"].fillna("(空)")
+
+
+    # excel_header = ['自行车']
+    df.to_excel(write, sheet_name='Sheet1',index=False)
+    # df.to_excel(write, sheet_name='Sheet1', header = excel_header)
+    write.save()
 
 
 def get_advice():
@@ -244,7 +290,6 @@ def comsume():
 def main():
     # excel_info()
     # nlp_info()
-
     # bike_way()
     # age_way()
     # live_way()
@@ -258,7 +303,7 @@ def main():
     # out_trouble()
     # get_advice()
     # comsume()
-
+    # fill_empty()
    
 
 if __name__ == '__main__':
