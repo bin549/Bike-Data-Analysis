@@ -11,44 +11,57 @@ def get_ents(doc):
             entities.append(ent.text)
     return entities
 
+excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
+
+
+def bike_way():
+    sex = pd.DataFrame(excel_data["性别"])
+
+    male = excel_data[excel_data['性别'] == 1]
+    female = excel_data[excel_data['性别'] == 2]
+
+    goway = pd.DataFrame([
+        [pd.DataFrame(male["步行"].value_counts()).loc[1][0], pd.DataFrame(female["步行"].value_counts()).loc[1][0]],
+        [pd.DataFrame(male["自行车"].value_counts()).loc[1][0], pd.DataFrame(female["自行车"].value_counts()).loc[1][0]],
+        [pd.DataFrame(male["电瓶车"].value_counts()).loc[1][0], pd.DataFrame(female["电瓶车"].value_counts()).loc[1][0]],
+        [pd.DataFrame(male["私家车"].value_counts()).loc[1][0], pd.DataFrame(female["私家车"].value_counts()).loc[1][0]],
+        [pd.DataFrame(male["平衡车"].value_counts()).loc[1][0], pd.DataFrame(female["平衡车"].value_counts()).loc[1][0]],
+        [pd.DataFrame(male["其他"].value_counts()).loc[1][0], pd.DataFrame(female["其他"].value_counts()).loc[1][0]]
+    ], columns=[1, 2])
+    df = pd.DataFrame(goway, columns=[sex.loc[1][0], sex.loc[2][0]])
+    df.plot.bar()
+    plt.show()
+
+
+def age_way():
+    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
+    age = pd.DataFrame(excel_data["年级"].value_counts())
+    sex = pd.DataFrame(excel_data["性别"])
+
+    male = excel_data[excel_data['性别'] == 1]
+    female = excel_data[excel_data['性别'] == 2]
+
+    ageway = pd.DataFrame([
+            [pd.DataFrame(male["年级"].value_counts()).loc[1][0], pd.DataFrame(female["年级"].value_counts()).loc[1][0]],
+            [pd.DataFrame(male["年级"].value_counts()).loc[1][0], pd.DataFrame(female["年级"].value_counts()).loc[1][0]],
+            [pd.DataFrame(male["年级"].value_counts()).loc[1][0], pd.DataFrame(female["年级"].value_counts()).loc[1][0]],
+            [pd.DataFrame(male["年级"].value_counts()).loc[1][0], pd.DataFrame(female["年级"].value_counts()).loc[1][0]]
+        ], columns=[1, 2])
+
+    df = pd.DataFrame(ageway, columns=[sex.loc[1][0], sex.loc[2][0]])
+    df.plot.bar()
+    plt.show()
+
 
 def main():
     # nlp = spacy.load('zh_core_web_sm')
     # print(len(excel_data))
     # print(nlp.Defaults.stop_words)
     # print(len(nlp.Defaults.stop_words))
-
-"""
-    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
-    age = pd.DataFrame(excel_data["年级"].value_counts())
-    sex = pd.DataFrame(excel_data["性别"])
-    use_bike = pd.DataFrame([pd.DataFrame(excel_data["是否购买自行车"].value_counts()).loc[1][0],
-                       pd.DataFrame(excel_data["是否购买自行车"].value_counts()).loc[2][0]],
-                       index=['y', 'n'])
-    # use_bike.plot.pie(subplots=True, colors=['r', 'g', 'b', 'c'], autopct='%.2f', fontsize=20, figsize=(6, 6))
-    df2 = pd.DataFrame(age, columns=[sex.loc[1][0], sex.loc[2][0]])
-    print(df2.head())
-    df2.plot.bar()
-    plt.show()
-"""
-"""
-    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
-    sex = pd.DataFrame(excel_data["性别"])
-    print(pd.DataFrame(excel_data["步行"].value_counts()).loc[1][0])
-    goway = pd.DataFrame([pd.DataFrame(excel_data["步行"].value_counts()).loc[1][0],
-                    pd.DataFrame(excel_data["自行车"].value_counts()).loc[1][0],
-                    pd.DataFrame(excel_data["电瓶车"].value_counts()).loc[1][0],
-                    pd.DataFrame(excel_data["私家车"].value_counts()).loc[1][0],
-                    pd.DataFrame(excel_data["平衡车"].value_counts()).loc[0][0],
-                    pd.DataFrame(excel_data["其他"].value_counts()).loc[1][0]],
-                                 index = ['步行', '自行车', '电瓶车', '私家车', '平衡车', '其他'])
-
-    df2 = pd.DataFrame(goway, columns=[sex.loc[1][0], sex.loc[2][0]])
-    print(df2.head())
-    df2.plot.bar()
-    plt.show()
-"""
-
+    # bike_way()
+    # age_way()
+    age = pd.DataFrame(excel_data["年级"]).loc[1].value_counts()
+    print(age)
 
 """
     df.plot.pie(subplots=True, figsize=(8, 4))
