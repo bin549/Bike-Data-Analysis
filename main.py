@@ -23,10 +23,15 @@ def get_ents(doc):
 
 
 def bike_way():
+
     sex = pd.DataFrame(excel_data["性别"])
 
     male = excel_data[excel_data['性别'] == 1]
     female = excel_data[excel_data['性别'] == 2]
+
+    index_ls = ['步行', '自行车', '电瓶车', '私家车', '平衡车', '其他']
+    scale_ls = range(len(index_ls))
+
 
     goway = pd.DataFrame([
         [pd.DataFrame(male["步行"].value_counts()).loc[1][0], pd.DataFrame(female["步行"].value_counts()).loc[1][0]],
@@ -37,12 +42,15 @@ def bike_way():
         [pd.DataFrame(male["其他"].value_counts()).loc[1][0], pd.DataFrame(female["其他"].value_counts()).loc[1][0]]
     ], columns=[1, 2])
     df = pd.DataFrame(goway, columns=[sex.loc[1][0], sex.loc[2][0]])
-    df.plot.bar()
+    df.plot.bar(color=['#66b3ff', '#ff9999'])
+    plt.xticks(scale_ls, index_ls)
+    plt.legend(['男', '女'])
+    plt.title("男女生各种出行方式")
+    plt.ylabel("数量（/个）")
     plt.show()
 
 
 def age_way():
-    excel_data = pd.read_excel('./excel/bike_data.xlsx', encoding='utf-8', sheet_name='Sheet1')
     sex = pd.DataFrame(excel_data["性别"])
 
     male = excel_data[excel_data['性别'] == 1]
@@ -57,19 +65,28 @@ def age_way():
             [pd.DataFrame(male_bikeower["年级"].value_counts()).loc[3][0], pd.DataFrame(female_bikeower["年级"].value_counts()).loc[3][0]],
             [pd.DataFrame(male_bikeower["年级"].value_counts()).loc[4][0], pd.DataFrame(female_bikeower["年级"].value_counts()).loc[4][0]]
         ], columns=[1, 2])
-    print(ageway)
+
+    index_ls = ['大一', '大二', '大三', '大四']
+    scale_ls = range(len(index_ls))
+
     df = pd.DataFrame(ageway, columns=[sex.loc[1][0], sex.loc[2][0]])
-    df.plot.bar()
+    df.plot.bar(color=['#66b3ff', '#ff9999'])
+    plt.xticks(scale_ls, index_ls)
+    plt.legend(['男', '女'])
+    plt.ylabel("共购买自行车人数（/人）")
+    plt.title("各年级男女生购买自行车数量")
     plt.show()
 
 
 def live_way():
+    colors = ['#66b3ff', '#ff9999', '#99ff99', '#ffcc99']
+    explode = (0, 0.1, 0, 0)
     df = pd.DataFrame(excel_data["宿舍位置"])
     blanks = []
     for i, rv in df.itertuples():
         if type(rv) == str:
             if rv == "(空)":
-                blanks.append(i)  # add matching index numbers to the list
+                blanks.append(i)
     df.drop(blanks, inplace=True)
     TAG = {"燕": "燕华苑", "海": "海华苑", "粤": "粤华苑", "京": "京华苑"}
     words = {}
@@ -83,9 +100,10 @@ def live_way():
                 words[TAG[rv[0]]] = 1
     print(words)
     df = pd.DataFrame(pd.Series(words))
-    df.plot.pie(subplots=True, figsize=(8, 4))
+    df.plot.pie(subplots=True, explode=explode, colors=colors, shadow=True, autopct='%0.1f%%', fontsize=10, startangle=20,
+                figsize=(6, 6))
+    plt.title("出行学生所住宿舍百分比")
     plt.show()
-
 
 def bike_price():
     df = pd.DataFrame(excel_data["购买自行车的价格"])
@@ -106,18 +124,33 @@ def bike_price():
                 words[rv] += 1
             else:
                 words[rv] = 1
+
     print(words)
-    df = pd.DataFrame(pd.Series(words))
-    df.plot.pie(subplots=True, figsize=(8, 4))
+    words.pop(0)
+    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99']
+    fig1, ax1 = plt.subplots()
+    patches, texts, autotexts = ax1.pie(words.values(), colors=colors, labels=words.keys(), autopct='%1.1f%%', startangle=90)
+    for text in texts:
+        text.set_color('grey')
+    for autotext in autotexts:
+        autotext.set_color('grey')
+    plt.title("学生购买车辆价位百分比")
+    ax1.axis('equal')
+    plt.tight_layout()
     plt.show()
 
 
 def electric_suitable():
     df = pd.DataFrame([pd.DataFrame(excel_data["电瓶车价格是否合理"].value_counts()).loc[1],
                        pd.DataFrame(excel_data["电瓶车价格是否合理"].value_counts()).loc[2]],
-                      index=['y', 'n'])
-    df.plot.pie(subplots=True, colors=['r', 'g', 'b', 'c'], autopct='%.2f', fontsize=20, figsize=(6, 6))
+                      index=['合理', '不合理'])
+
+    colors = ['#66b3ff','#ff9999',  '#99ff99', '#ffcc99']
+    df.plot.pie(subplots=True, colors=colors, shadow=True, autopct='%1.1f%%', fontsize=10, startangle=90, figsize=(6, 6))
+    plt.title("学生对电瓶车价格是否合理评价百分比")
+    plt.ylabel(None)
     plt.show()
+
 
 
 def nonbike_reason():
@@ -126,7 +159,10 @@ def nonbike_reason():
                     pd.DataFrame(excel_data["时间充裕"].value_counts()).loc[1][0],
                     pd.DataFrame(excel_data["与人同行"].value_counts()).loc[1][0]],
                                  index=['距离近', '可锻炼身体', '时间充裕', '与人同行'])
-    df.plot.pie(subplots=True, figsize=(8, 4))
+    colors = ['#66b3ff', '#ff9999', '#99ff99', '#ffcc99']
+    df.plot.pie(subplots=True, colors=colors, shadow=True, autopct='%1.1f%%', fontsize=10, startangle=90,
+                figsize=(6, 6))
+    plt.title("行走学生出行各原因百分比")
     plt.show()
 
 
@@ -134,7 +170,10 @@ def change_or_not():
     df = pd.DataFrame([pd.DataFrame(excel_data["相较于疫情之前，您的出行方式是否有变化"].value_counts()).loc[1],
                        pd.DataFrame(excel_data["相较于疫情之前，您的出行方式是否有变化"].value_counts()).loc[2]],
                       index=['y', 'n'])
-    df.plot.pie(subplots=True, figsize=(8, 4))
+    colors = ['#66b3ff', '#ff9999', '#99ff99', '#ffcc99']
+    df.plot.pie(subplots=True, colors=colors, shadow=True, autopct='%1.1f%%', fontsize=10, startangle=90,
+                figsize=(6, 6))
+    plt.title("疫情是否影响学生出行百分比")
     plt.show()
 
 
@@ -158,10 +197,17 @@ def sharebike_choose():
                     words[entity] += 1
                 else:
                     words[entity] = 1
-    print(words)
 
-    df = pd.DataFrame(pd.Series(words))
-    df.plot(kind="bar")
+    print(words)
+    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99']
+    fig1, ax1 = plt.subplots()
+    ax1.pie(words.values(), colors=colors, labels=words.keys(), autopct='%1.1f%%', startangle=90)
+    centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig = plt.gcf()
+    fig.gca().add_artist(centre_circle)
+    ax1.axis('equal')
+    plt.title("学生所选用共享单车品牌百分比")
+    plt.tight_layout()
     plt.show()
 
 
@@ -197,17 +243,35 @@ def some_reason():
 
 
 def change_reason():
+    labels = ['缩减开支', '锻炼身体', '上课地点调动', '宿舍调动', '其他_']
     df = pd.DataFrame([pd.DataFrame(excel_data["缩减开支"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["锻炼身体"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["上课地点调动"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["宿舍调动"].value_counts()).loc[1][0],
-                       pd.DataFrame(excel_data["其它"].value_counts()).loc[1][0]],
-                      index=['缩减开支', '锻炼身体', '上课地点调动', '宿舍调动', '其他_'])
-    df.plot.pie(subplots=True, figsize=(8, 4))
+                       pd.DataFrame(excel_data["其他_"].value_counts()).loc[1][0]],
+                      index=labels)
+    # colors
+    colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99', '#ffcd29']
+    # explsion
+    explode = (0.05, 0.05, 0.05, 0.05, 0.05)
+    fig1, ax1 = plt.subplots()
+
+    plt.pie(df.values, colors=colors, labels=labels, autopct='%1.1f%%', startangle=90, pctdistance=0.85, explode=explode)
+    # draw circle
+    centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig = plt.gcf()
+    fig.gca().add_artist(centre_circle)
+    # Equal aspect ratio ensures that pie is drawn as a circle
+    ax1.axis('equal')
+
+    plt.title("疫情影响学生出行原因因素百分比")
+    plt.tight_layout()
     plt.show()
 
 
 def out_trouble():
+    labels = ['价格贵', '道路拥堵', '排队时间长', '手续办理麻烦', '通勤时间长', '保安有冲突', '防盗', '其他__']
+
     df = pd.DataFrame([pd.DataFrame(excel_data["价格贵"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["道路拥堵"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["排队时间长"].value_counts()).loc[1][0],
@@ -216,8 +280,20 @@ def out_trouble():
                        pd.DataFrame(excel_data["保安有冲突"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["防盗"].value_counts()).loc[1][0],
                        pd.DataFrame(excel_data["其他"].value_counts()).loc[1][0]],
-                      index=['价格贵', '道路拥堵', '排队时间长', '手续办理麻烦', '通勤时间长', '保安有冲突', '防盗', '其他__'])
-    df.plot.pie(subplots=True, figsize=(8, 4))
+                      index=labels)
+
+    colors = ['#ff9999', '#66b3bf', '#22ff99', '#ffcc99', '#66b3ff', '#44bf99', '#dd9999', '#fffc99']
+
+    fig1, ax1 = plt.subplots()
+    patches, texts, autotexts = ax1.pie(df.values, colors=colors, labels=labels, autopct='%1.1f%%', startangle=90)
+    for text in texts:
+        text.set_color('grey')
+    for autotext in autotexts:
+        autotext.set_color('grey')
+    ax1.axis('equal')
+
+    plt.title("学生不做电瓶车原因百分比")
+    plt.tight_layout()
     plt.show()
 
 
@@ -282,27 +358,38 @@ def get_advice():
 
 
 def comsume():
+    explode = (0.1, 0, 0, 0)
     df = pd.DataFrame(excel_data["月消费"].value_counts())
-    df.plot.pie(subplots=True, figsize=(8, 4))
+    colors = ['#66b3ff', '#ff9999', '#99ff99', '#ffcc99']
+    df.plot.pie(subplots=True, label=None, colors=colors, shadow=True, autopct='%1.1f%%', fontsize=10, startangle=90,
+                figsize=(6, 6), explode=explode)
+
+    price_lim = ["<1000", "1000~2000", "2000~3000", ">4000"]
+    plt.title("学生月消费水平百分比")
+    plt.ylabel(None)
+    plt.legend(price_lim)
     plt.show()
 
 
 def main():
-    # excel_info()
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+    plt.rcParams['axes.unicode_minus'] = False
+
+    excel_info()
     # nlp_info()
-    # bike_way()
-    # age_way()
-    # live_way()
-    # bike_price()
-    # electric_suitable()
-    # nonbike_reason()
-    # change_or_not()
-    # sharebike_choose()
-    # some_reason()
-    # change_reason()
-    # out_trouble()
-    # get_advice()
-    # comsume()
+    bike_way()
+    age_way()
+    live_way()
+    bike_price()
+    electric_suitable()
+    nonbike_reason()
+    change_or_not()
+    sharebike_choose()
+    #some_reason()
+    change_reason()
+    out_trouble()
+    get_advice()
+    comsume()
     # fill_empty()
    
 
